@@ -1,4 +1,4 @@
-import Table from "../components/Table/Table";
+import Table from "../../components/Table/Table";
 import React from "react";
 
 interface Props {}

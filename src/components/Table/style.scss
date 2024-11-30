@@ -1,0 +1,13 @@
+.table {
+    width: 100%;
+    display: flex;
+    flex-direction: row-reverse;
+    gap:16px;
+}
+
+.poster {
+    background-size: contain;
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+}

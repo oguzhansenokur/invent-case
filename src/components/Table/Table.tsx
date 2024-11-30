@@ -5,6 +5,7 @@ import SearchBar from "./SearchBar";
 import FilterButtons from "./FilterButtons";
 import YearSelector from "./YearSelector";
 import apiWrapper from "../../api/apiWrapper";
+import "./style.scss";
 
 const years = [
   { label: "All", value: null },
@@ -15,9 +16,10 @@ const years = [
 ];
 
 const columns = [
-  { field: "imdbID", headerName: "ID", width: 90 },
-  { field: "Title", headerName: "Name", width: 150 },
-  { field: "Year", headerName: "Year", width: 150 },
+  {field:"Poster", headerName:"Poster", width: 100, renderCell: (params) => <div className="poster" style={{ backgroundImage: `url(${params.row.Poster})` }}  />},
+  { field: "imdbID", headerName: "ID", width: 150 },
+  { field: "Title", headerName: "Name", width: 300 },
+  { field: "Year", headerName: "Year", width: 100 },
 ];
 
 const Table = () => {
@@ -77,21 +79,22 @@ const Table = () => {
   };
 
   return (
-    <div>
-      <SearchBar
-        search={search}
-        onSearchChange={(newSearch : string) => updateParams({ search: newSearch, page: 0 })}
-      />
-      <FilterButtons
-        types={["movie", "series", "episode"]}
-        setType={(newType : string) => updateParams({ type: newType, page: 0 })}
-      />
-      <YearSelector
-        year={year}
-        years={years}
-        onYearChange={(newYear : string) => updateParams({ year: newYear, page: 0 })}
-      />
-
+    <div className="table">
+      <div className="table__filter">
+        <SearchBar
+          search={search}
+          onSearchChange={(newSearch : string) => updateParams({ search: newSearch, page: 0 })}
+        />
+        <FilterButtons
+          types={["movie", "series", "episode"]}
+          setType={(newType : string) => updateParams({ type: newType, page: 0 })}
+        />
+        <YearSelector
+          year={year}
+          years={years}
+          onYearChange={(newYear : string) => updateParams({ year: newYear, page: 0 })}
+        />
+      </div>
       <DataGrid
         rows={rows}
         columns={columns}
@@ -99,6 +102,7 @@ const Table = () => {
         paginationMode="server"
         rowCount={totalCount}
         loading={loading}
+        rowHeight={80}
         paginationModel={{ page: page-1, pageSize: 10 }}
         onPaginationModelChange={(newModel) =>
         {
@@ -110,6 +114,45 @@ const Table = () => {
         disableRowSelectionOnClick
         onRowClick={(row) => {
           navigate(`/details/${row.imdbID || row.id}`);
+        }}
+        sx={{
+          "& .MuiDataGrid-root": {
+            border: "1px solid #28282d",
+            borderRight : "1px solid #28282d",
+            borderLeft : "1px solid #28282d",
+            borderTop : "1px solid #28282d", 
+          },
+          "& .MuiDataGrid-cell": {
+            borderBottom: "1px solid #28282d", 
+            borderTop: "1px solid #28282d",
+            borderRight: "1px solid #28282d",
+            color: "white",
+            borderLeft: "1px solid #28282d",
+          },
+          "& .MuiDataGrid-columnHeaders": {
+            borderBottom: "2px solid #28282d",
+            borderTop: "2px solid #28282d",
+            backgroundColor: "#28282d",
+            background: "#28282d",
+          },
+          "& .MuiDataGrid-columnHeader": {
+            borderRight: "1px solid #28282d",
+            borderLeft: "1px solid #28282d",
+            backgroundColor: "#28282d",
+            color: "white",
+            fontSize: "16px",
+            fontWeight: "bold",
+          },
+          "& .MuiDataGrid-filler" : {
+            backgroundColor: "#28282d",
+          },
+          "& .MuiTablePagination-displayedRows" :{
+            color: "white",
+          },
+          "& .MuiTablePagination-actions": {
+            color: "white",
+          },  
+          maxWidth: "100%",
         }}
       />
     </div>
