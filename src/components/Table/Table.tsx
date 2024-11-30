@@ -2,6 +2,22 @@ import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import TextField from "@mui/material/TextField";
 import apiWrapper from "../../api/apiWrapper.js";
+import { Button, } from "@mui/material";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+
+
+
+const years = [
+  {label: "All", value: null},
+  {label: "2022", value: "2022"},
+  {label: "2021", value: "2021"},
+  {label: "2020", value: "2020"},
+  {label: "2019", value: "2019"},
+  {label: "2018", value: "2018"},
+  {label: "2017", value:"2017"},
+  
+];
 
 const Table = ({ columns }) => {
   const [rows, setRows] = useState([]);
@@ -12,6 +28,10 @@ const Table = ({ columns }) => {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("Pokemon");
   const [totalCount, setTotalCount] = useState(0);
+  const [type,setType] = useState(null);
+  const [year, setYear ] = useState(null);
+  const [initialLoad, setInitialLoad] = useState(true); // İlk yükleme kontrolü
+
 
   const loadMoreData = async () => {
     setLoading(true);
@@ -21,7 +41,9 @@ const Table = ({ columns }) => {
       
       const response = await apiWrapper.getData({
         page: page + 1, 
-        s:search
+        s:search,
+        type,
+        y:year
       });
       if(response.Response === "True" ) {
         setRows(response.Search); 
@@ -41,9 +63,14 @@ const Table = ({ columns }) => {
 
 
   useEffect(() => {
+    if (initialLoad) {
+      setInitialLoad(false);
+      loadMoreData(); 
+      return;
+    }
     setPaginationModel((prev) => ({ ...prev, page: 0 }));
-    loadMoreData();
-  }, [search]);
+
+  }, [search, type,year]);
 
   useEffect(() => {
     loadMoreData();
@@ -59,6 +86,48 @@ const Table = ({ columns }) => {
         onChange={(e) => setSearch(e.target.value)}
         style={{ marginBottom: "16px" }}
       />
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={()=> {
+          setType("movie");
+        }}
+        
+      >
+        Movies
+      </Button>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={()=> {
+          setType("series");
+        }}
+        
+      >
+        Series
+      </Button>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={()=> {
+          setType("episode");
+        }}
+        
+      >
+        Episode
+      </Button>
+      <Select
+        labelId="demo-simple-select-label"
+        id="demo-simple-select"
+        value={year}
+        label="Year"
+        onChange={(e) => setYear(e.target.value)}
+
+      >
+        {years.map((year, index) => (
+          <MenuItem key={index} value={year.value}>{year.label}</MenuItem>
+        ))}
+      </Select>
 
       <DataGrid
         rows={rows}

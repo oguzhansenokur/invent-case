@@ -9,7 +9,7 @@ const apiClient = axios.create({
 });
 
 const apiWrapper = {
-  getData: async ({ page, pageSize, sortField, sortOrder, filter ,s}) => {
+  getData: async ({ page, pageSize, sortField, sortOrder, filter ,s,type,y}) => {
     try {
       const response = await apiClient.get("/", {
         params: {
@@ -19,7 +19,9 @@ const apiWrapper = {
           sortOrder,
           filter,
           apiKey: import.meta.env.VITE_API_KEY,
-          s
+          s,
+          type,
+          y
         },
       });
 
