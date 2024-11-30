@@ -1,78 +1,54 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import TextField from "@mui/material/TextField";
-import apiWrapper from "../../api/apiWrapper.js";
-import { Button, } from "@mui/material";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import { GridColDef } from "@mui/x-data-grid";
-import { useNavigate } from "react-router-dom";
-
-
+import { useNavigate, useSearchParams } from "react-router-dom";
+import SearchBar from "./SearchBar";
+import FilterButtons from "./FilterButtons";
+import YearSelector from "./YearSelector";
+import apiWrapper from "../../api/apiWrapper";
 
 const years = [
-  {label: "All", value: null},
-  {label: "2022", value: "2022"},
-  {label: "2021", value: "2021"},
-  {label: "2020", value: "2020"},
-  {label: "2019", value: "2019"},
-  {label: "2018", value: "2018"},
-  {label: "2017", value:"2017"},
-  
+  { label: "All", value: null },
+  { label: "2022", value: "2022" },
+  { label: "2021", value: "2021" },
+  { label: "2020", value: "2020" },
+  { label: "2019", value: "2019" },
 ];
 
-const columns: GridColDef<(typeof rows)[number]>[] = [
+const columns = [
   { field: "imdbID", headerName: "ID", width: 90 },
-  {
-    field: "Title",
-    headerName: "Name",
-    width: 150,
-    editable: true,
-  },
-  {
-    field: "Year",
-    headerName: "Year",
-    width: 150,
-    editable: true,
-  },
+  { field: "Title", headerName: "Name", width: 150 },
+  { field: "Year", headerName: "Year", width: 150 },
 ];
 
 const Table = () => {
   const [rows, setRows] = useState([]);
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
-  });
-  const [loading, setLoading] = useState(false);
-  const [search, setSearch] = useState("Pokemon");
   const [totalCount, setTotalCount] = useState(0);
-  const [type,setType] = useState(null);
-  const [year, setYear ] = useState(null);
-  const [initialLoad, setInitialLoad] = useState(true); // İlk yükleme kontrolü
+  const [loading, setLoading] = useState(false);
+
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
+  const search = searchParams.get("search");
+  const type = searchParams.get("type") || null;
+  const year = searchParams.get("year") || null;
+  const page = parseInt(searchParams.get("page") || "1", 10);
 
   const loadMoreData = async () => {
     setLoading(true);
     try {
-      const { page, pageSize } = paginationModel;
-
-      
       const response = await apiWrapper.getData({
-        page: page + 1, 
-        s:search,
+        page: page + 1,
+        s: search || "",
         type,
-        y:year
+        y: year,
       });
-      if(response.Response === "True" ) {
-        setRows(response.Search); 
-        setTotalCount(response.totalResults); 
-      }
-      else {
+      if (response.Response === "True") {
+        setRows(response.Search);
+        setTotalCount(response.totalResults);
+      } else {
         setRows([]);
         setTotalCount(0);
       }
-
     } catch (error) {
       console.error("Error loading data:", error);
     } finally {
@@ -81,87 +57,56 @@ const Table = () => {
   };
 
 
-
-
   useEffect(() => {
-    if (initialLoad) {
-      setInitialLoad(false);
-      loadMoreData(); 
-      return;
-    }
-    setPaginationModel((prev) => ({ ...prev, page: 0 }));
+    loadMoreData();
+  }, [search, type, year, page]);
 
-  }, [search, type,year]);
+  const updateParams = (newParams: { [key: string]: string | null | number }) => {
 
-  useEffect(() => {
-    if(!initialLoad) {
-      loadMoreData();
-    }
-    
-  }, [paginationModel]);
+    setSearchParams((prevParams) => {
+      const updatedParams = new URLSearchParams(prevParams);
+      Object.keys(newParams).forEach((key) => {
+        if (newParams[key] !== null && newParams[key] !== undefined) {
+          updatedParams.set(key, newParams[key]);
+        } else {
+          updatedParams.delete(key);
+        }
+      });
+      return updatedParams;
+    });
+  };
 
   return (
     <div>
-      <TextField
-        id="outlined-basic"
-        label="Search"
-        variant="outlined"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        style={{ marginBottom: "16px" }}
+      <SearchBar
+        search={search}
+        onSearchChange={(newSearch : string) => updateParams({ search: newSearch, page: 0 })}
       />
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={()=> {
-          setType("movie");
-        }}
-        
-      >
-        Movies
-      </Button>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={()=> {
-          setType("series");
-        }}
-        
-      >
-        Series
-      </Button>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={()=> {
-          setType("episode");
-        }}
-        
-      >
-        Episode
-      </Button>
-      <Select
-        labelId="demo-simple-select-label"
-        id="demo-simple-select"
-        value={year}
-        label="Year"
-        onChange={(e) => setYear(e.target.value)}
-
-      >
-        {years.map((year, index) => (
-          <MenuItem key={index} value={year.value}>{year.label}</MenuItem>
-        ))}
-      </Select>
+      <FilterButtons
+        types={["movie", "series", "episode"]}
+        setType={(newType : string) => updateParams({ type: newType, page: 0 })}
+      />
+      <YearSelector
+        year={year}
+        years={years}
+        onYearChange={(newYear : string) => updateParams({ year: newYear, page: 0 })}
+      />
 
       <DataGrid
         rows={rows}
         columns={columns}
-        getRowId={(row) => row.imdbID || row.id} // Her satır için benzersiz bir ID
-        paginationMode="server" 
-        rowCount={totalCount} 
+        getRowId={(row) => row.imdbID || row.id}
+        paginationMode="server"
+        rowCount={totalCount}
         loading={loading}
-        paginationModel={paginationModel}
-        onPaginationModelChange={(model) => setPaginationModel(model)} 
+        paginationModel={{ page: page-1, pageSize: 10 }}
+        onPaginationModelChange={(newModel) =>
+        {
+          const newPage = newModel.page + 1; 
+          if (newPage !== page) {
+            updateParams({ page: newPage });
+          }
+        }        }
         disableRowSelectionOnClick
         onRowClick={(row) => {
           navigate(`/details/${row.imdbID || row.id}`);

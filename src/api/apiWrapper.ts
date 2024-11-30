@@ -8,20 +8,45 @@ const apiClient = axios.create({
   },
 });
 
+
+interface SearchParams {
+  page: number;
+  s: string; 
+  type?: string | null; 
+  y?: string | null;
+}
+
+interface SearchResponse {
+  Response: "True" | "False";
+  Search?: Array<{
+    imdbID: string;
+    Title: string;
+    Year: string;
+    [key: string]: any;
+  }>;
+  totalResults?: string;
+  Error?: string;
+}
+
+interface DetailsResponse {
+  imdbID: string;
+  Title: string;
+  Year: string;
+  [key: string]: any;
+}
+
+
 const apiWrapper = {
-  getData: async ({ page, pageSize, sortField, sortOrder, filter ,s,type,y}) => {
+
+  getData: async (params: SearchParams): Promise<SearchResponse> => {
     try {
-      const response = await apiClient.get("/", {
+      const response = await apiClient.get<SearchResponse>("/", {
         params: {
-          page,
-          pageSize,
-          sortField,
-          sortOrder,
-          filter,
+          page: params.page,
           apiKey: import.meta.env.VITE_API_KEY,
-          s,
-          type,
-          y
+          s: params.s,
+          type: params.type || undefined,
+          y: params.y || undefined,
         },
       });
 
@@ -32,9 +57,10 @@ const apiWrapper = {
     }
   },
 
-  getDetails: async (id) => {
+
+  getDetails: async (id: string): Promise<DetailsResponse> => {
     try {
-      const response = await apiClient.get(`/data/${id}`);
+      const response = await apiClient.get<DetailsResponse>(`/data/${id}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching details:", error);
