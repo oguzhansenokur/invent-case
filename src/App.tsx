@@ -1,30 +1,21 @@
 import React from "react";
 import "./main.scss";
-import Table from "./components/Table/Table";
-import { GridColDef } from "@mui/x-data-grid";
+
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Main from "./pages/Main";
+import Detail from "./pages/Detail";
 
 
 function App() {
-  const columns: GridColDef<(typeof rows)[number]>[] = [
-    { field: "imdbID", headerName: "ID", width: 90 },
-    {
-      field: "Title",
-      headerName: "Name",
-      width: 150,
-      editable: true,
-    },
-    {
-      field: "Year",
-      headerName: "Year",
-      width: 150,
-      editable: true,
-    },
-  ];
+
 
   return (
-    <div className="App">
-      <Table  columns={columns} />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Main />} />
+        <Route path="/details/:id" element={<Detail />} />
+      </Routes>
+    </Router>
   );
 }
 

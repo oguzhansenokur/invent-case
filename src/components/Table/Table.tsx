@@ -5,6 +5,8 @@ import apiWrapper from "../../api/apiWrapper.js";
 import { Button, } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
+import { GridColDef } from "@mui/x-data-grid";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -19,7 +21,23 @@ const years = [
   
 ];
 
-const Table = ({ columns }) => {
+const columns: GridColDef<(typeof rows)[number]>[] = [
+  { field: "imdbID", headerName: "ID", width: 90 },
+  {
+    field: "Title",
+    headerName: "Name",
+    width: 150,
+    editable: true,
+  },
+  {
+    field: "Year",
+    headerName: "Year",
+    width: 150,
+    editable: true,
+  },
+];
+
+const Table = () => {
   const [rows, setRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -31,6 +49,7 @@ const Table = ({ columns }) => {
   const [type,setType] = useState(null);
   const [year, setYear ] = useState(null);
   const [initialLoad, setInitialLoad] = useState(true); // İlk yükleme kontrolü
+  const navigate = useNavigate();
 
 
   const loadMoreData = async () => {
@@ -62,6 +81,8 @@ const Table = ({ columns }) => {
   };
 
 
+
+
   useEffect(() => {
     if (initialLoad) {
       setInitialLoad(false);
@@ -73,7 +94,10 @@ const Table = ({ columns }) => {
   }, [search, type,year]);
 
   useEffect(() => {
-    loadMoreData();
+    if(!initialLoad) {
+      loadMoreData();
+    }
+    
   }, [paginationModel]);
 
   return (
@@ -139,6 +163,9 @@ const Table = ({ columns }) => {
         paginationModel={paginationModel}
         onPaginationModelChange={(model) => setPaginationModel(model)} 
         disableRowSelectionOnClick
+        onRowClick={(row) => {
+          navigate(`/details/${row.imdbID || row.id}`);
+        }}
       />
     </div>
   );
