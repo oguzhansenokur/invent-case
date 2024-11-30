@@ -14,6 +14,7 @@ const FilterButtons: React.FC<FilterButtonsProps> = ({types, setType }) => (
         color="primary"
         onClick={() => setType(filterType)}
         style={{ marginRight: "8px" }}
+        className="filter-button"
       >
         {filterType.charAt(0).toUpperCase() + filterType.slice(1)}
       </Button>

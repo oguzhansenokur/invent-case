@@ -15,6 +15,7 @@ function App() {
         <Route path="/" element={<Main />} />
         <Route path="/details/:id" element={<Detail />} />
       </Routes>
+      
     </Router>
   );
 }

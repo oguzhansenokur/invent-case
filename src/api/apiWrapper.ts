@@ -14,6 +14,8 @@ interface SearchParams {
   s: string; 
   type?: string | null; 
   y?: string | null;
+  i?: string | null
+  plot?: string
 }
 
 interface SearchResponse {
@@ -47,6 +49,8 @@ const apiWrapper = {
           s: params.s,
           type: params.type || undefined,
           y: params.y || undefined,
+          i: params.i || undefined,
+          plot: params.plot || undefined
         },
       });
 
@@ -60,7 +64,7 @@ const apiWrapper = {
 
   getDetails: async (id: string): Promise<DetailsResponse> => {
     try {
-      const response = await apiClient.get<DetailsResponse>(`/data/${id}`);
+      const response = await apiClient.get<DetailsResponse>(`/${id}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching details:", error);

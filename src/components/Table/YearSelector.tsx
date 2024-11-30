@@ -19,6 +19,13 @@ const YearSelector: React.FC<YearSelectorProps> = ({ year, years, onYearChange }
     onChange={(e) => onYearChange(e.target.value || null)} 
     style={{ marginBottom: "16px" }}
     displayEmpty
+    sx={{
+      color: "#e91e63", // Metin rengi
+      border:"none",
+      "& .MuiSvgIcon-root": {
+        color: "red", // Açılır ok ikonu rengi
+      },
+    }}
   >
     {years?.map((yearOption, index) => (
       <MenuItem key={index} value={yearOption.value}>
