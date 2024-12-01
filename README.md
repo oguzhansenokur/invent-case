@@ -9,6 +9,11 @@
   ```bash
   npm install
   ```
+- You have to create a '.env' file on root folder and add the env variables
+  ```env
+  VITE_API_URL=http://www.omdbapi.com/
+  VITE_API_KEY=YOUR_API_KEY
+  ```
   
 - You are ready to go!
   ```bash
