@@ -1,7 +1,7 @@
 import { TextField } from "@mui/material";
 import React from "react";
 interface SearchBarProps {
-    search: string;
+    search: string | null;
     onSearchChange: (search: string) => void;
 }
 

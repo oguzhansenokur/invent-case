@@ -18,24 +18,18 @@ interface SearchParams {
   plot?: string
 }
 
-interface SearchResponse {
+export interface SearchResponse {
   Response: "True" | "False";
   Search?: Array<{
     imdbID: string;
     Title: string;
     Year: string;
-    [key: string]: any;
+    [key: string]: string ;
   }>;
   totalResults?: string;
   Error?: string;
 }
 
-interface DetailsResponse {
-  imdbID: string;
-  Title: string;
-  Year: string;
-  [key: string]: any;
-}
 
 
 const apiWrapper = {
@@ -57,17 +51,6 @@ const apiWrapper = {
       return response.data;
     } catch (error) {
       console.error("Error fetching list data:", error);
-      throw error;
-    }
-  },
-
-
-  getDetails: async (id: string): Promise<DetailsResponse> => {
-    try {
-      const response = await apiClient.get<DetailsResponse>(`/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching details:", error);
       throw error;
     }
   },
