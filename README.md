@@ -1,3 +1,22 @@
+#Installation Steps:
+- Clone this repository.
+- After cloning change your directory to root dir of repo.
+  ```bash
+  cd invent-case
+  ```
+
+- Then install dependencies
+  ```bash
+  npm install
+  ```
+  
+- You are ready to go!
+  ```bash
+  npm run dev
+  ```
+  
+- You are able to demonstrate this project on development mode.
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
