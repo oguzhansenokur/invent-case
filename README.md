@@ -1,4 +1,4 @@
-#Installation Steps:
+# Installation Steps:
 - Clone this repository.
 - After cloning change your directory to root dir of repo.
   ```bash
