@@ -10,8 +10,8 @@ const apiClient = axios.create({
 
 
 interface SearchParams {
-  page: number;
-  s: string; 
+  page?: number;
+  s?: string; 
   type?: string | null; 
   y?: string | null;
   i?: string | null
@@ -20,7 +20,7 @@ interface SearchParams {
 
 export interface SearchResponse {
   Response: "True" | "False";
-  Search?: Array<{
+  Search: Array<{
     imdbID: string;
     Title: string;
     Year: string;
@@ -30,11 +30,26 @@ export interface SearchResponse {
   Error?: string;
 }
 
+export interface DetailResponse {
+  Title: string;
+  Year: string;
+  Released: string;
+  Runtime: string;
+  Genre: string;
+  Director: string;
+  Actors: string;
+  Plot: string;
+  Language: string;
+  imdbRating: string;
+  Poster: string;
+  Type: string;
+}
+
 
 
 const apiWrapper = {
 
-  getData: async (params: SearchParams): Promise<SearchResponse> => {
+  getData: async (params: SearchParams): Promise<SearchResponse | DetailResponse > => {
     try {
       const response = await apiClient.get<SearchResponse>("/", {
         params: {

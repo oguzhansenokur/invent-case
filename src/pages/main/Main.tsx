@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import {  useNavigate, useSearchParams } from "react-router-dom";
 import Table from "../../components/Main/Table";
 import SearchBar from "../../components/Main/SearchBar";
 import FilterButtons from "../../components/Main/FilterButtons";
@@ -17,7 +17,7 @@ const years = [
 
 const Main = () => {
   const [rows, setRows] = useState<SearchResponse["Search"]>([]);
-  const [totalCount, setTotalCount] = useState<string | undefined | number>(0);
+  const [totalCount, setTotalCount] = useState< number>(0);
   const [loading, setLoading] = useState(false);
   const [hasRedirected, setHasRedirected] = useState(false); // Yönlendirme kontrolü
 
@@ -42,7 +42,7 @@ const Main = () => {
       });
       if (response.Response === "True") {
         setRows(response.Search);
-        setTotalCount(response.totalResults);
+        setTotalCount(Number(response.totalResults));
       } else {
         setRows([]);
         setTotalCount(0);
@@ -76,10 +76,9 @@ const Main = () => {
   }, [search, type, year, page]);
 
   useEffect(() => {
-    // Eğer "search" parametresi yoksa ve yönlendirme yapılmamışsa
     if (!search && !hasRedirected) {
-      setHasRedirected(true); // Yönlendirme yapıldı olarak işaretle
-      setSearchParams({ search: "Pokemon" }); // URL'yi güncelle
+      setHasRedirected(true);
+      setSearchParams({ search: "Pokemon" }); 
     }
   }, [search, hasRedirected, setSearchParams]);
 

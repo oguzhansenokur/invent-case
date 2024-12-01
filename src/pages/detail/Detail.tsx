@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import apiWrapper from "../../api/apiWrapper";
+import apiWrapper, { DetailResponse } from "../../api/apiWrapper";
 import "./style.scss";
 
 
 const Detail =  () => {
   const {id } = useParams();
-  const [data, setData] = useState({});
+  const [data, setData] = useState<DetailResponse>();
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {

@@ -22,7 +22,7 @@ const columns = [
 
 interface TableProps {
   rows: SearchResponse["Search"];
-  totalCount: number | undefined | string;
+  totalCount: number ;
   loading: boolean;
   page: number;
   onPageChange: (page: number) => void;
